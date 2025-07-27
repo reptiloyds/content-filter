@@ -18,7 +18,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>ru.naumov.contentfilter.EntryPoint</mainClass>
+                  <mainClass>ru.naumov.contentfilter.app.EntryPoint</mainClass>
                 </transformer>
               </transformers>
             </configuration>

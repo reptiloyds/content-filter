@@ -35,7 +35,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>ru.naumov.contentfilter.EntryPoint</mainClass>
+                                    <mainClass>ru.naumov.contentfilter.app.EntryPoint</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
