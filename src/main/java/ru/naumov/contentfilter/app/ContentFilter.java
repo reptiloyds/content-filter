@@ -1,8 +1,12 @@
 package ru.naumov.contentfilter.app;
 
+import ru.naumov.contentfilter.handler.LineHandler;
 import ru.naumov.contentfilter.input.FileReader;
+import ru.naumov.contentfilter.output.FileWriter;
+import ru.naumov.contentfilter.output.buffer.OutputBuffer;
+import ru.naumov.contentfilter.statistic.OutputStatistic;
+import ru.naumov.contentfilter.statistic.StatisticPrinter;
 
-import java.io.File;
 import java.util.List;
 
 import static picocli.CommandLine.*;
@@ -24,22 +28,33 @@ public class ContentFilter implements Runnable {
     private String[] inputFiles;
 
     private final FileReader fileReader = new FileReader();
+    private final FileWriter fileWriter = new FileWriter();
+    private final LineHandler lineHandler = new LineHandler();
+    private final StatisticPrinter statisticPrinter = new StatisticPrinter();
 
     @Override
     public void run() {
+        handleInputFiles();
+        printStatistic();
+        handleOutputFiles();
+    }
+
+    private void handleInputFiles(){
         for (String fileName : inputFiles) {
-            HandleFile(fileName);
+            List<String> lines = fileReader.readFile(fileName);
+            lineHandler.handle(lines);
         }
     }
 
-    public void HandleFile(String fileName) {
-        List<String> lines = fileReader.ReadFile(fileName);
-        for (String line : lines) {
-            System.out.println(line);
+    private void printStatistic(){
+        for (OutputStatistic statistic : lineHandler.readOnlyOutputBuffers){
+            statisticPrinter.print(statistic);
         }
     }
 
-    public void HandleLine(){
-
+    private void handleOutputFiles(){
+        for (OutputBuffer<?> outputBuffer : lineHandler.readOnlyOutputBuffers){
+            fileWriter.writeFile(outputBuffer);
+        }
     }
 }

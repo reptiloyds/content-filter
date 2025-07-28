@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileReader {
-    public List<String> ReadFile(String fileName){
+    public List<String> readFile(String fileName){
         String path = "." + File.separator + fileName;
         FileInputStream inputStream;
         try {
