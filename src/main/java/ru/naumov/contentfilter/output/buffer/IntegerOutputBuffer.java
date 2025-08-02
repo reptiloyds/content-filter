@@ -19,7 +19,38 @@ public final class IntegerOutputBuffer extends OutputBuffer<Long> {
     }
 
     @Override
+    protected void appendContent(Long value) {
+        super.appendContent(value);
+
+    }
+
+    @Override
     public String getFullStatistic() {
-        return "";
+        String result = null;
+        long minValue = Long.MAX_VALUE;
+        long maxValue = Long.MIN_VALUE;
+        long sum = 0;
+        long median = 0;
+
+        for (long value : list) {
+            if (value < minValue) {
+                minValue = value;
+            }
+            if (value > maxValue) {
+                maxValue = value;
+            }
+
+            sum += value;
+        }
+
+        if (list.isEmpty()) {
+            return "";
+        } else {
+            median = sum / list.size();
+            return "Min value: " + minValue + "\n"
+                    + "Max value: " + maxValue + "\n"
+                    + "Sum value: " + sum + "\n"
+                    + "Median value: " + median;
+        }
     }
 }

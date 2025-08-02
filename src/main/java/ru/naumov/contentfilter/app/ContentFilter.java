@@ -7,6 +7,8 @@ import ru.naumov.contentfilter.output.buffer.OutputBuffer;
 import ru.naumov.contentfilter.statistic.OutputStatistic;
 import ru.naumov.contentfilter.statistic.StatisticPrinter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import static picocli.CommandLine.*;
@@ -27,34 +29,60 @@ public class ContentFilter implements Runnable {
     @Parameters(paramLabel = "INPUT_FILES", description = "One or more files to handle")
     private String[] inputFiles;
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+
     private final FileReader fileReader = new FileReader();
-    private final FileWriter fileWriter = new FileWriter();
     private final LineHandler lineHandler = new LineHandler();
-    private final StatisticPrinter statisticPrinter = new StatisticPrinter();
+    private StatisticPrinter statisticPrinter;
+    private FileWriter fileWriter;
 
     @Override
     public void run() {
+        initialize();
         handleInputFiles();
         printStatistic();
         handleOutputFiles();
     }
 
-    private void handleInputFiles(){
-        for (String fileName : inputFiles) {
-            List<String> lines = fileReader.readFile(fileName);
-            lineHandler.handle(lines);
+    private void initialize() {
+        this.statisticPrinter = new StatisticPrinter(shortStatistic, fullStatistic);
+        this.fileWriter = new FileWriter(outputPath, outputPrefix, appendToExistingFiles);
+        try {
+            this.fileWriter.initialize();
+        } catch (IllegalArgumentException e) {
+            System.out.println(ANSI_RED + e.getMessage() + ANSI_RESET);
+            System.exit(1);
         }
     }
 
-    private void printStatistic(){
-        for (OutputStatistic statistic : lineHandler.readOnlyOutputBuffers){
+    private void handleInputFiles() {
+        for (String fileName : inputFiles) {
+            try {
+                List<String> lines = fileReader.readFile(fileName);
+                lineHandler.handle(lines);
+            } catch (FileNotFoundException e) {
+                System.out.println(ANSI_YELLOW + "File not found: " + fileName + ANSI_RESET);
+            } catch (IOException e) {
+                System.out.println(ANSI_RED + "Error when reading the file: " + fileName + ANSI_RESET);
+            }
+        }
+    }
+
+    private void printStatistic() {
+        for (OutputStatistic statistic : lineHandler.readOnlyOutputBuffers) {
             statisticPrinter.print(statistic);
         }
     }
 
-    private void handleOutputFiles(){
-        for (OutputBuffer<?> outputBuffer : lineHandler.readOnlyOutputBuffers){
-            fileWriter.writeFile(outputBuffer);
+    private void handleOutputFiles() {
+        for (OutputBuffer<?> outputBuffer : lineHandler.readOnlyOutputBuffers) {
+            try {
+                fileWriter.writeFile(outputBuffer);
+            } catch (IOException e) {
+                System.out.println(ANSI_RED + "Error when writing a file: " + outputBuffer.getFileName() + ANSI_RESET);
+            }
         }
     }
 }

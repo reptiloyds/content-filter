@@ -15,6 +15,28 @@ public final class StringOutputBuffer extends OutputBuffer<String> {
 
     @Override
     public String getFullStatistic() {
-        return "";
+        int minLength = Integer.MAX_VALUE;
+        String minLengthStr = null;
+        int maxLength = Integer.MIN_VALUE;
+        String maxLengthStr = null;
+
+        for (String value : list) {
+            int length = value.length();
+            if (length < minLength) {
+                minLength = length;
+                minLengthStr = value;
+            }
+            if (length > maxLength) {
+                maxLength = length;
+                maxLengthStr = value;
+            }
+        }
+
+        if (list.isEmpty()) {
+            return "";
+        } else {
+            return "Min length string: " + minLengthStr + "\n"
+                    + "Max length string: " + maxLengthStr;
+        }
     }
 }

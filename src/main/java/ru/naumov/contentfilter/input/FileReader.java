@@ -5,25 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileReader {
-    public List<String> readFile(String fileName){
+    public List<String> readFile(String fileName) throws FileNotFoundException, IOException {
         String path = "." + File.separator + fileName;
         FileInputStream inputStream;
-        try {
-            inputStream = new FileInputStream(path);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        inputStream = new FileInputStream(path);
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-        List<String> output = new ArrayList<>();
-        try {
-            while(bufferedReader.ready()){
-                output.add(bufferedReader.readLine());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        List<String> inputLines = new ArrayList<>();
+        while (bufferedReader.ready()) {
+            inputLines.add(bufferedReader.readLine());
         }
 
-        return output;
+        return inputLines;
     }
 }

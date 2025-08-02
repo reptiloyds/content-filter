@@ -21,6 +21,30 @@ public final class FloatOutputBuffer extends OutputBuffer<Double> {
 
     @Override
     public String getFullStatistic() {
-        return "";
+        double minValue = Double.MAX_VALUE;
+        double maxValue = Double.MIN_VALUE;
+        double sum = 0;
+        double median = 0;
+
+        for (double value : list) {
+            if (value < minValue) {
+                minValue = value;
+            }
+            if (value > maxValue) {
+                maxValue = value;
+            }
+
+            sum += value;
+        }
+
+        if (list.isEmpty()) {
+            return "";
+        } else {
+            median = sum / list.size();
+            return "Min value: " + minValue + "\n"
+                    + "Max value: " + maxValue + "\n"
+                    + "Sum value: " + sum + "\n"
+                    + "Median value: " + median;
+        }
     }
 }
