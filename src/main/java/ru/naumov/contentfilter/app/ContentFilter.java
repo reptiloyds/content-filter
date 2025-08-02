@@ -29,10 +29,6 @@ public class ContentFilter implements Runnable {
     @Parameters(paramLabel = "INPUT_FILES", description = "One or more files to handle")
     private String[] inputFiles;
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-
     private final FileReader fileReader = new FileReader();
     private final LineHandler lineHandler = new LineHandler();
     private StatisticPrinter statisticPrinter;
@@ -52,7 +48,7 @@ public class ContentFilter implements Runnable {
         try {
             this.fileWriter.initialize();
         } catch (IllegalArgumentException e) {
-            System.out.println(ANSI_RED + e.getMessage() + ANSI_RESET);
+            System.out.println(e.getMessage());
             System.exit(1);
         }
     }
@@ -63,9 +59,9 @@ public class ContentFilter implements Runnable {
                 List<String> lines = fileReader.readFile(fileName);
                 lineHandler.handle(lines);
             } catch (FileNotFoundException e) {
-                System.out.println(ANSI_YELLOW + "File not found: " + fileName + ANSI_RESET);
+                System.out.println("File not found: " + fileName);
             } catch (IOException e) {
-                System.out.println(ANSI_RED + "Error when reading the file: " + fileName + ANSI_RESET);
+                System.out.println("Error when reading the file: " + fileName);
             }
         }
     }
@@ -81,7 +77,7 @@ public class ContentFilter implements Runnable {
             try {
                 fileWriter.writeFile(outputBuffer);
             } catch (IOException e) {
-                System.out.println(ANSI_RED + "Error when writing a file: " + outputBuffer.getFileName() + ANSI_RESET);
+                System.out.println("Error when writing a file: " + outputBuffer.getFileName());
             }
         }
     }
